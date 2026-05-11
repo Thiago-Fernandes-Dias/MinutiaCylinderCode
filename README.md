@@ -30,28 +30,46 @@ Fase III) Consolidação: o algoritmo implementa quatro tipos de consolidação.
 
 =======================================================================================
 
-## Compilação (Ubuntu 24.04)
+## Compilação
 
-### Dependências
+### Via Docker (recomendado)
+
+O código utiliza bindings C++ do MPI (`MPI::Datatype`), removidos a partir do MPI 3.0.
+O Dockerfile incluído compila o OpenMPI 1.10.7 com suporte a esses bindings.
 
 ```bash
-sudo apt install g++ make libopenmpi-dev openmpi-bin
+# Construir a imagem (uma única vez)
+docker build -t mcc .
+
+# Executar o MCC dentro do container
+docker run --rm mcc <impressao1> <impressao2> -N {8|16} -C {LSS|LSSR|LSA|LSAR|LGS|NHS} [-H] [-B]
 ```
 
-| Pacote              | Finalidade                                      |
-|---------------------|-------------------------------------------------|
-| `g++`               | Compilador C++ (GNU)                            |
-| `make`              | Automação da compilação                         |
-| `libopenmpi-dev`    | Headers e bibliotecas do OpenMPI                |
-| `openmpi-bin`       | Wrapper `mpic++` e utilitários de execução MPI  |
+### Via compilação nativa
 
-### Compilação
+Requer OpenMPI com bindings C++ (OpenMPI < 2.0). Em distribuições recentes,
+instale a partir do código-fonte:
 
 ```bash
+# Baixar e compilar OpenMPI 1.10.7 com bindings C++
+wget https://download.open-mpi.org/release/open-mpi/v1.10/openmpi-1.10.7.tar.gz
+tar xf openmpi-1.10.7.tar.gz
+cd openmpi-1.10.7
+./configure --prefix=/opt/openmpi --enable-mpi-cxx CFLAGS="-Wno-error" CXXFLAGS="-Wno-error" \
+    && make -j$(nproc) && sudo make install
+cd ..
+
+# Adicionar ao PATH
+export PATH=/opt/openmpi/bin:$PATH
+export LD_LIBRARY_PATH=/opt/openmpi/lib
+
+# Compilar o MCC
 make            # compila o executável mcc
 make clean      # remove artefatos de compilação
 make check-deps # verifica as dependências
 ```
+
+Dependências nativas: `g++`, `make`, `wget`, `libtool`, `flex`, `libhwloc-dev`, `perl`.
 
 ### Execução
 
