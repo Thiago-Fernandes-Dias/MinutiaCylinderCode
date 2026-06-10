@@ -1,3 +1,6 @@
 build/
 mcc
 __pycache__
+.venv
+
+comparissons/

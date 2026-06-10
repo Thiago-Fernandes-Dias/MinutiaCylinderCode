@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:22.04 as build_mcc
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV OPENMPI_VERSION=1.10.7
@@ -28,4 +28,4 @@ RUN make -f mcc.mk clean
 RUN make -f mcc.mk -j$(nproc) all
 RUN chmod +x compare_all.py
 
-ENTRYPOINT ["bash"]
+CMD [ "python3", "compare_all.py" ]
