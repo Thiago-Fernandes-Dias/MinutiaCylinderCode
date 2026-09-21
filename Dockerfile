@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 as build_mcc
+FROM ubuntu:22.04 AS build_mcc
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV OPENMPI_VERSION=1.10.7
